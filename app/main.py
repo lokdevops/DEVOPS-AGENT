@@ -39,6 +39,10 @@ class LinkResponse(BaseModel):
 def startup():
     init_db()
 
+@app.get("/healthz")
+def health():
+    return {"status": "ok"}
+
 @app.post("/api/links", response_model=LinkResponse, status_code=201)
 def create_link(body: LinkRequest):
     parsed = urlsplit(str(body.url))

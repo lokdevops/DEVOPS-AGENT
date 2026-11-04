@@ -7,6 +7,7 @@ def test_full_lifecycle(monkeypatch):
     with tempfile.TemporaryDirectory() as tmp:
         monkeypatch.setattr(main, "DB_PATH", os.path.join(tmp, "test.db"))
         with TestClient(main.app) as client:
+            assert client.get("/healthz").json() == {"status": "ok"}
             created = client.post("/api/links", json={"url":"https://example.org/path"})
             assert created.status_code == 201
             code = created.json()["code"]

@@ -40,6 +40,27 @@ The scenario input changes requirement classification and ambiguities; the imple
 ## Tests
 `python -m pytest -q tests`
 
+## Jenkins deployment to Kubernetes Dev
+The root `Jenkinsfile` runs tests for every build. Builds of `main` also build and
+push an image tagged with the commit SHA, then apply `k8s/dev.yaml` and wait for
+the Dev Deployment rollout. The Kubernetes Service is internal to the cluster;
+configure an Ingress or your platform's Dev routing if external access is needed.
+
+The Jenkins agent needs Python 3, Docker access, `kubectl`, and a configured
+multibranch pipeline that checks out this repository. Set the pipeline parameters:
+
+- `IMAGE_REPOSITORY`: writable registry/repository, such as
+  `registry.example.com/team/url-shortener`.
+- `REGISTRY_CREDENTIAL_ID`: Jenkins username/password credential for pushing images.
+- `KUBECONFIG_CREDENTIAL_ID`: Jenkins secret-file credential whose kubeconfig can
+  create/update resources in the `dev` namespace.
+
+The Kubernetes cluster also needs a default StorageClass capable of provisioning
+the 1 GiB SQLite data volume. For a private registry, configure an image-pull
+secret for the `dev` namespace (or otherwise grant the cluster access to pull the
+image). The manifest sets `BASE_URL` to the in-cluster Service address; change it
+to the Dev URL when adding external routing.
+
 ## Architecture and production tradeoffs
 Client -> FastAPI -> SQLite tables (links, clicks). Random URL-safe tokens with unique database key and collision retries. Use PostgreSQL, Redis cache, asynchronous event queue, distributed rate limits, abuse screening, authorization, and monitoring for a production deployment. Add migrations, concurrency/load tests, observability, and retention policy before production.
 
