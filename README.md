@@ -63,12 +63,3 @@ to the Dev URL when adding external routing.
 
 ## Architecture and production tradeoffs
 Client -> FastAPI -> SQLite tables (links, clicks). Random URL-safe tokens with unique database key and collision retries. Use PostgreSQL, Redis cache, asynchronous event queue, distributed rate limits, abuse screening, authorization, and monitoring for a production deployment. Add migrations, concurrency/load tests, observability, and retention policy before production.
-
-## Interview questions
-- What distinguishes an agent from a function? Agent roles have defined inputs/outputs; these are deterministic and not LLM autonomous.
-- Why orchestrate? Enforce dependencies, gates, retries, failure propagation, and traceability.
-- Why SQLite? Zero-setup demo, not scalable distributed storage.
-- How do you avoid unsafe generated code? Sandboxed execution, allowlists, approvals, test gates; not yet implemented here.
-- How would brownfield reasoning work? Repository indexing, dependency analysis, diff generation, test selection, reviewer approval.
-- How would you improve resilience? Retry transient tool errors, checkpoints, idempotency keys, timeout budgets, rollback.
-- How to scale analytics? Event queue and async aggregation; eventual consistency.
